@@ -19,12 +19,26 @@ spec:
           ports:
             - name: http
               containerPort: 3000
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
         - name: nginx 
           image: nicobenaz/k8s-demo/poddoz:3
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 8080
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
           volumeMounts:
             - name: config-volume
               mountPath: /etc/nginx/nginx.conf
