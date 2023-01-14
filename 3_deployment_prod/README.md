@@ -18,6 +18,9 @@ Steps:
 3. Go into `terraform` folder and type `terraform init`  and `terraform plan/apply`
 
 4. Go to your AWS console into Codebuild section and enjoy it.
+TODO
+
+https://docs.aws.amazon.com/codebuild/latest/userguide/use-codebuild-agent.html
 
 5. Destroy all resources with `terraform destroy`
 

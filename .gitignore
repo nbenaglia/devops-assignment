@@ -1,4 +1,4 @@
 .terraform/
-
+**/codebuild_output/**
 **.tfstate*
 **.terraform.lock.hcl
