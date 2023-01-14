@@ -138,7 +138,7 @@ resource "aws_codebuild_project" "cicd" {
 
   source {
     type            = "GITHUB"
-    location        = "https://github.com/mitchellh/packer.git"
+    location        = "https://github.com/nbenaglia/react-image-compressor.git"
     git_clone_depth = 1
 
     git_submodules_config {

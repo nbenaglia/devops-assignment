@@ -17,14 +17,8 @@ Steps:
 
 3. Go into `terraform` folder and type `terraform init`  and `terraform plan/apply`
 
+4. Go to your AWS console into Codebuild section and enjoy it.
 
+5. Destroy all resources with `terraform destroy`
 
-
-
-
-
-
-
-6. Destroy all resources with `terraform destroy`
-
-7. Bye bye
+6. Bye bye
