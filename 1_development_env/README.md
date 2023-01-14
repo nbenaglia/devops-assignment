@@ -2,9 +2,9 @@
 
 Steps:
 
-1. Clone the main Nodejs project.
+1. Clone the project: `https://github.com/nbenaglia/react-image-compressor.git`
 
-2. Put the Dockerfile, docker-compose.yaml files and conf folder in the project's root folder
+2. `Dockerfile`, `docker-compose.yaml` files and `conf` folder are in the project's root folder
 
 3. `docker-compose up`
 
