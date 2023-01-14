@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: myapp
-          image: nicobenaz/k8s-demo/poddoz:3
+          image: nicobenaz/jsapp:v1.0
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
