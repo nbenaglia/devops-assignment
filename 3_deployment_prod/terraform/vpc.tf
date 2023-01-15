@@ -19,7 +19,20 @@ resource "aws_subnet" "private_subnet" {
   map_public_ip_on_launch = false #private subnet
 
   tags = {
-    Name = format("${var.environment}-%s", data.aws_availability_zones.available.names[0])
+    Name = format("${var.environment}-%s-%s", data.aws_availability_zones.available.names[0], "private")
+  }
+}
+
+resource "aws_subnet" "public_subnet" {
+  vpc_id     = aws_vpc.cicd_vpc.id
+  cidr_block = cidrsubnet(aws_vpc.cicd_vpc.cidr_block, 4, 4)
+
+  availability_zone = data.aws_availability_zones.available.names[0]
+
+  map_public_ip_on_launch = true #public subnet
+
+  tags = {
+    Name = format("${var.environment}-%s-%s", data.aws_availability_zones.available.names[0], "public")
   }
 }
 
@@ -31,9 +44,9 @@ resource "aws_security_group" "cicd" {
   ingress {
     description = "Very permissive"
     from_port   = 0
-    to_port     = 0
+    to_port     = 65535
     protocol    = "tcp"
-    cidr_blocks = [aws_vpc.cicd_vpc.cidr_block]
+    self        = true
   }
 
   egress {
@@ -80,6 +93,18 @@ resource "aws_route_table" "private" {
   }
 }
 
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.cicd_vpc.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.ig.id
+  }
+  tags = {
+    Name        = "${var.environment}-public-route-table"
+    Environment = "${var.environment}"
+  }
+}
+
 resource "aws_route" "private_nat_gateway" {
   route_table_id         = aws_route_table.private.id
   destination_cidr_block = "0.0.0.0/0"
@@ -89,4 +114,9 @@ resource "aws_route" "private_nat_gateway" {
 resource "aws_route_table_association" "private" {
   subnet_id      = aws_subnet.private_subnet.id
   route_table_id = aws_route_table.private.id
+}
+
+resource "aws_route_table_association" "public" {
+  subnet_id      = aws_subnet.public_subnet.id
+  route_table_id = aws_route_table.public.id
 }

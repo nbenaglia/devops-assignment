@@ -1,7 +1,3 @@
-resource "aws_codestarconnections_connection" "github" {
-  name          = "github-connection"
-  provider_type = "GitHub"
-}
 resource "aws_s3_bucket" "cicd" {
   bucket = "cicd-${aws_vpc.cicd_vpc.id}"
 }
@@ -88,7 +84,8 @@ resource "aws_iam_role_policy" "cicd" {
       "Condition": {
         "StringEquals": {
           "ec2:Subnet": [
-            "${aws_subnet.private_subnet.arn}"
+            "${aws_subnet.private_subnet.arn}",
+            "${aws_subnet.public_subnet.arn}"
           ],
           "ec2:AuthorizedService": "codebuild.amazonaws.com"
         }
@@ -107,7 +104,7 @@ resource "aws_iam_role_policy" "cicd" {
     {
       "Effect": "Allow",
       "Action": "codestar-connections:UseConnection",
-      "Resource": "${aws_codestarconnections_connection.github.arn}"
+      "Resource": "*"
     }
   ]
 }
@@ -173,7 +170,7 @@ resource "aws_codebuild_project" "cicd" {
     vpc_id = aws_vpc.cicd_vpc.id
 
     subnets = [
-      aws_subnet.private_subnet.id
+      aws_subnet.public_subnet.id
     ]
 
     security_group_ids = [
