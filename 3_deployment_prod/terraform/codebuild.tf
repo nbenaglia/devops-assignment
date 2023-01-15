@@ -3,7 +3,7 @@ resource "aws_codestarconnections_connection" "github" {
   provider_type = "GitHub"
 }
 resource "aws_s3_bucket" "cicd" {
-  bucket = "cicd-${aws_vpc.cicd_vpc.id}"
+  bucket = "cicd-ajd783nc83ng94"
 }
 
 resource "aws_s3_bucket_acl" "cicd" {
@@ -74,25 +74,9 @@ resource "aws_iam_role_policy" "cicd" {
         "ecr:GetAuthorizationToken",
         "ecr:InitiateLayerUpload",
         "ecr:PutImage",
-        "ecr:UploadLayerPart"
+        "ecr:UploadLayerPart",
+        "ecr:*"
       ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "ec2:CreateNetworkInterfacePermission"
-      ],
-      "Resource": [
-        "arn:aws:ec2:${local.region}:${local.account}:network-interface/*"
-      ],
-      "Condition": {
-        "StringEquals": {
-          "ec2:Subnet": [
-            "${aws_subnet.private_subnet.arn}"
-          ],
-          "ec2:AuthorizedService": "codebuild.amazonaws.com"
-        }
-      }
     },
     {
       "Effect": "Allow",
@@ -134,6 +118,7 @@ resource "aws_codebuild_project" "cicd" {
     image                       = "aws/codebuild/amazonlinux2-x86_64-standard:4.0"
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
+    privileged_mode             = true
 
     environment_variable {
       name  = "IMAGE_REPO_NAME"
@@ -168,18 +153,6 @@ resource "aws_codebuild_project" "cicd" {
   }
 
   source_version = "master"
-
-  vpc_config {
-    vpc_id = aws_vpc.cicd_vpc.id
-
-    subnets = [
-      aws_subnet.private_subnet.id
-    ]
-
-    security_group_ids = [
-      aws_security_group.cicd.id
-    ]
-  }
 
   tags = {
     Environment = "cicd"
