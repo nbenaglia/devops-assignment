@@ -57,6 +57,17 @@ resource "aws_iam_role_policy" "cicd" {
       ],
       "Resource": "*"
     },
+     {
+      "Effect": "Allow",
+      "Resource": [
+        "*"
+      ],
+      "Action": [
+        "ecr:Describe*",
+        "ecr:Get*",
+        "ecr:PutImage"
+      ]
+    },
     {
       "Effect": "Allow",
       "Action": [
@@ -108,19 +119,17 @@ resource "aws_codebuild_project" "cicd" {
 
   environment {
     compute_type                = "BUILD_GENERAL1_SMALL"
-    image                       = "aws/codebuild/standard:1.0"
+    image                       = "aws/codebuild/amazonlinux2-x86_64-standard:4.0"
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
 
     environment_variable {
-      name  = "SOME_KEY1"
-      value = "SOME_VALUE1"
+      name  = "IMAGE_REPO_NAME"
+      value = "jsapp"
     }
-
     environment_variable {
-      name  = "SOME_KEY2"
-      value = "SOME_VALUE2"
-      type  = "PARAMETER_STORE"
+      name  = "IMAGE_TAG"
+      value = "1.0"
     }
   }
 
