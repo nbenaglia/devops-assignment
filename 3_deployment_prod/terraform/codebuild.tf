@@ -1,3 +1,7 @@
+resource "aws_codestarconnections_connection" "github" {
+  name          = "github-connection"
+  provider_type = "GitHub"
+}
 resource "aws_s3_bucket" "cicd" {
   bucket = "cicd-${aws_vpc.cicd_vpc.id}"
 }
@@ -28,6 +32,7 @@ EOF
 
 resource "aws_iam_role_policy" "cicd" {
   role = aws_iam_role.cicd.name
+  name = "codebuild"
 
   policy = <<POLICY
 {
@@ -96,6 +101,11 @@ resource "aws_iam_role_policy" "cicd" {
         "${aws_s3_bucket.cicd.arn}",
         "${aws_s3_bucket.cicd.arn}/*"
       ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": "codestar-connections:UseConnection",
+      "Resource": "${aws_codestarconnections_connection.github.arn}"
     }
   ]
 }
@@ -105,7 +115,7 @@ POLICY
 resource "aws_codebuild_project" "cicd" {
   name          = "cicd-project"
   description   = "My CICD project with CodeBuild"
-  build_timeout = "5"
+  build_timeout = "2"
   service_role  = aws_iam_role.cicd.arn
 
   artifacts {
