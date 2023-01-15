@@ -115,7 +115,7 @@ POLICY
 resource "aws_codebuild_project" "cicd" {
   name          = "cicd-project"
   description   = "My CICD project with CodeBuild"
-  build_timeout = "2"
+  build_timeout = "5"
   service_role  = aws_iam_role.cicd.arn
 
   artifacts {
