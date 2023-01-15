@@ -68,9 +68,13 @@ resource "aws_iam_role_policy" "cicd" {
         "*"
       ],
       "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:CompleteLayerUpload",
         "ecr:Describe*",
-        "ecr:Get*",
-        "ecr:PutImage"
+        "ecr:GetAuthorizationToken",
+        "ecr:InitiateLayerUpload",
+        "ecr:PutImage",
+        "ecr:UploadLayerPart"
       ]
     },
     {
@@ -84,9 +88,7 @@ resource "aws_iam_role_policy" "cicd" {
       "Condition": {
         "StringEquals": {
           "ec2:Subnet": [
-            "${aws_subnet.cicd[0].arn}",
-            "${aws_subnet.cicd[1].arn}",
-            "${aws_subnet.cicd[2].arn}"
+            "${aws_subnet.private_subnet.arn}"
           ],
           "ec2:AuthorizedService": "codebuild.amazonaws.com"
         }
@@ -171,9 +173,7 @@ resource "aws_codebuild_project" "cicd" {
     vpc_id = aws_vpc.cicd_vpc.id
 
     subnets = [
-      aws_subnet.cicd[0].id,
-      aws_subnet.cicd[1].id,
-      aws_subnet.cicd[2].id
+      aws_subnet.private_subnet.id
     ]
 
     security_group_ids = [
